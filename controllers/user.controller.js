@@ -79,3 +79,25 @@ module.exports.userDelete = (req, res) => {
     res.status(500).send(error.message);
   }
 };
+
+//!----------- update a User By ID -----------
+module.exports.userUpdate = (req, res) => {
+  try {
+    const updateInfo = req.body;
+    let userIndex = users.findIndex((obj) => obj.id == updateInfo.id);
+    const props = Object.keys(updateInfo);
+    for (let prop of props) {
+      users[userIndex][prop] = updateInfo[prop];
+    }
+    fs.writeFile("users.json", JSON.stringify(users), (err) => {
+      if (err) {
+        res.send("failed to save the data");
+      } else {
+        res.status(200).send({
+          status: "successful",
+          modifiedId: updateInfo.id,
+        });
+      }
+    });
+  } catch (error) {}
+};
