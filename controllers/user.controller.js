@@ -46,11 +46,35 @@ module.exports.addUser = (req, res) => {
         } else {
           res.status(200).send({
             status: "successful",
-            insertId: newUser?.id,
+            newUserId: newUser?.id,
+            newUserName: newUser?.name,
           });
         }
       });
     }
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
+
+//!----------- Delete a User By ID -----------
+module.exports.userDelete = (req, res) => {
+  try {
+    const { id } = req.body;
+
+    const deleteIndex = users.findIndex((data) => data.id == Number(id));
+
+    users.splice(deleteIndex, 1);
+    fs.writeFile("users.json", JSON.stringify(users), (err) => {
+      if (err) {
+        res.send("Failed to delete a user from JSON!");
+      } else {
+        res.status(200).send({
+          status: "successful",
+          deleteId: `deleted ${id}`,
+        });
+      }
+    });
   } catch (error) {
     res.status(500).send(error.message);
   }

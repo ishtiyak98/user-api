@@ -22,7 +22,9 @@ const addUserCheck = (req, res, next) => {
         next();
       }
     }
-  } catch (error) {}
+  } catch (error) {
+    res.send(error.message);
+  }
 };
 
 module.exports = addUserCheck;
