@@ -91,7 +91,7 @@ module.exports.userUpdate = (req, res) => {
     }
     fs.writeFile("users.json", JSON.stringify(users), (err) => {
       if (err) {
-        res.send("failed to save the data");
+        res.send("failed to save the data in JSON");
       } else {
         res.status(200).send({
           status: "successful",
@@ -99,5 +99,34 @@ module.exports.userUpdate = (req, res) => {
         });
       }
     });
-  } catch (error) {}
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
+
+//!----------- Update Bulk User By ID -----------
+module.exports.userBulkUpdate = (req, res) => {
+  try {
+    const updateUsersInfo = req.body;
+
+    for (let updateUser of updateUsersInfo) {
+      let userIndex = users.findIndex((obj) => obj.id == updateUser.id);
+      const props = Object.keys(updateUser);
+      for (let prop of props) {
+        users[userIndex][prop] = updateUser[prop];
+      }
+    }
+    fs.writeFile("users.json", JSON.stringify(users), (err) => {
+      if (err) {
+        res.send("failed to update in JSON");
+      } else {
+        res.status(200).send({
+          status: "successful",
+          updatedUser: `${updateUsersInfo?.length}`,
+        });
+      }
+    });
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 };
